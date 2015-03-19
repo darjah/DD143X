@@ -10,7 +10,8 @@ public class Dice {
 		throwDice();
 		//diceState = false;
 	}
-
+	
+	//testkommentar för git
 	public void throwDice() {
 		faceValue = random.nextInt(6) + 1;
 	}

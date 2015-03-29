@@ -10,7 +10,7 @@ public class EndStrategy {
 		// the player need every point possible
 
 		int[] evalScores = new int[card.categories.length];
-		AI.evalScores(hand.getHandArray(), evalScores);
+		AI.evalScores(hand, evalScores);
 
 		// fångar kåk direkt om vi ligger under par, kan inte få par
 		if (AI.fullHouse(card, hand)) {
@@ -51,7 +51,7 @@ public class EndStrategy {
 		if (wentForStraight) {
 			//System.out.println("4444");
 			int[] evalScore = new int[15];
-			AI.evalScores(hand.getHandArray(), evalScore);
+			AI.evalScores(hand, evalScore);
 			for (int l = evalScore.length - 1; l >= 0; l--) {
 				if (l != Scorecard.chance && evalScore[l] != 0
 						&& emptyCategories.contains(l)) {
@@ -115,14 +115,14 @@ public class EndStrategy {
 
 		if ((emptyCategories.contains(Scorecard.fullHouse) || emptyCategories
 				.contains(Scorecard.twoPair))
-				&& AI.doublePairScore(hand.getHandArray()) != 0) {
+				&& AI.twoPairScore(hand) != 0) {
 			//System.out.println("888");
 			MidStrategy.twoPairMid(card, hand, emptyCategories, evalScores);
 			return;
 		}
 
 		if (emptyCategories.contains(Scorecard.fullHouse)
-				&& AI.checkTripleScore(hand.getHandArray()) != 0) {
+				&& AI.threeOfAKindScore(hand) != 0) {
 
 			//System.out.println("999");
 			fullHouse(card, hand, emptyCategories, evalScores);
@@ -146,7 +146,7 @@ public class EndStrategy {
 			GetCategories.getTwoPair(hand);
 			GetCategories.getTwoPair(hand);
 
-			int score = AI.doublePairScore(hand.getHandArray());
+			int score = AI.twoPairScore(hand);
 			if (score != 0){
 				card.categories[Scorecard.twoPair] = score;
 				return;
@@ -189,10 +189,8 @@ public class EndStrategy {
 			}
 		}
 
-		card.categories[Scorecard.chance] = AI.chansScore(hand.getHandArray());
+		card.categories[Scorecard.chance] = AI.chansScore(hand);
 	}
-
-
 
 	/**
 	 * 
@@ -233,7 +231,7 @@ public class EndStrategy {
 		if (emptyCategories.contains(Scorecard.fullHouse)) {
 
 			GetCategories.getFullHouse(hand);
-			AI.evalScores(hand.getHandArray(), evalScores);
+			AI.evalScores(hand, evalScores);
 
 			// fångar kåk direkt om vi ligger under par, kan inte få par
 			if (AI.fullHouse(card, hand)) {
@@ -246,7 +244,7 @@ public class EndStrategy {
 
 			GetCategories.getFullHouse(hand);
 
-			AI.evalScores(hand.getHandArray(), evalScores);
+			AI.evalScores(hand, evalScores);
 
 			if (AI.fullHouse(card, hand)) {
 				return;
@@ -292,8 +290,6 @@ public class EndStrategy {
 			// nolla
 			NullEntry.nullEntry(card);
 			return;
-
 		}
 	}
-
 }

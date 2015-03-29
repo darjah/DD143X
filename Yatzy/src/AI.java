@@ -38,23 +38,15 @@ public class AI {
 		}
 
 		thisTurnScorecard[Scorecard.pair] = pairScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.twoPair] = twoPairScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.threeOfAKind] = threeOfAKindScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.fourOfAKind] = fourOfAKindScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.smallStraight] = smallStraightScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.largeStraight] = largeStraightScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.fullHouse] = fullHouseScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.chance] = chansScore(hand);
-		////Printer.printArray(scoreScore);
 		thisTurnScorecard[Scorecard.yatzy] = yatzyScore(hand);
-		////Printer.printArray(scoreScore);
+		//Printer.printArray(scoreScore);
 	}
 
 	public static int pairScore(Hand hand){
@@ -213,19 +205,19 @@ public class AI {
 
 		// start with check if we have a straight.
 		int smallStraightScore = AI.smallStraightScore(hand);
-		int bigStraightScore = AI.largeStraightScore(hand);
-		int weHaveYaatzy = AI.yatzyScore(hand);
+		int largeStraightScore = AI.largeStraightScore(hand);
+		int yatzyScore = AI.yatzyScore(hand);
 
 		if((smallStraightScore != 0) && (freeScores.contains(Scorecard.smallStraight))){
 			card.categories[Scorecard.smallStraight] = smallStraightScore;
 			return true;
 		}
-		if((bigStraightScore != 0) && (freeScores.contains(Scorecard.largeStraight))){
-			card.categories[Scorecard.largeStraight] = bigStraightScore;
+		if((largeStraightScore != 0) && (freeScores.contains(Scorecard.largeStraight))){
+			card.categories[Scorecard.largeStraight] = largeStraightScore;
 			return true;
 		}
-		if((weHaveYaatzy != 0) && (freeScores.contains(Scorecard.yatzy))){
-			card.categories[Scorecard.yatzy] = weHaveYaatzy;
+		if((yatzyScore != 0) && (freeScores.contains(Scorecard.yatzy))){
+			card.categories[Scorecard.yatzy] = yatzyScore;
 			return true;
 		}
 		return false;
@@ -238,5 +230,17 @@ public class AI {
 			return true;
 		}
 		return false;
+	}
+
+
+	//Beräkna poäng för #of a kind. summerar poängen för de antal tärningar som har värdet number
+	public static int numberScore(int[] dices, int number) {
+		int score = 0;
+		for (int i : dices) {
+			if (i == number) {
+				score += i;
+			}
+		}
+		return score;
 	}
 }

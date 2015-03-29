@@ -1,25 +1,16 @@
 //Part of the AI to caluculate which dices to rethrow and rethows them
 public class GetCategories {
-	/**
-	 * rethrows every dice in @hand that doesnt have the value @value
-	 * @param hand
-	 * @param value
-	 */
-	public static void allOfAKind(Hand hand, int value) {
-		for (Dice dice : hand.getDices()) {
-			if (dice.faceValue != value) {
+	//rethrows every dice in @hand that doesnt have the value @value
+	public static void allOfAKind(Hand hand, int value){
+		for(Dice dice : hand.getDices()){
+			if(dice.faceValue != value){
 				dice.throwDice();
 			}
 		}
 		hand.rollCounter();
 	}
 
-	/**
-	 * rethrow a hand that has pair, tripple or quardruple to the higest value
-	 * if there are more then two pairs.
-	 * 
-	 * @param hand
-	 * @param nrDices
+	/** rethrow a hand that has pair, tripple or quardruple to the higest value if there are more then two pairs.
 	 */
 	public static void nrDices(Hand hand, int nrDices) {
 		int[] countedDices = new int[6];
@@ -45,15 +36,14 @@ public class GetCategories {
 
 	/**
 	 * requires a twoPair hand in to work correctly
-	 * 
-	 * @param hand
 	 */
 	public static void twoPair(Hand hand) {
-		int[] countedDices = new int[6];
-		AI.countValues(hand.getHandArray(), countedDices);
+		int[] diceFreq = new int [AI.diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+				
 		int valueToRethrow = 1;
-		for (int i = 0; i < countedDices.length; i++) {
-			if (countedDices[i] == 1) {
+		for (int i = 0; i < diceFreq.length; i++) {
+			if (diceFreq[i] == 1) {
 				valueToRethrow = i + 1;
 			}
 		}
@@ -67,10 +57,8 @@ public class GetCategories {
 		hand.rollCounter();
 	}
 
-	/**
-	 * rethrows every surplus copy of a dice value in order to get a straight
-	 * @param hand
-	 */
+	/**rethrows every surplus copy of a dice value in order to get a straight
+	 **/
 	public static void largeStraight(Hand hand) {
 		boolean[] haveThisValue = { false, false, false, false, false, false };
 		for (Dice dice : hand.getDices()) {
@@ -86,7 +74,6 @@ public class GetCategories {
 
 	/**
 	 * rethrows every surplus copy of a dice value in order to get a straight
-	 * @param hand
 	 */
 	public static void smallStraight(Hand hand) {
 		boolean[] haveThisValue = { false, false, false, false, false, false };
@@ -104,8 +91,6 @@ public class GetCategories {
 	/**
 	 * Whatto do in case of full house on first or second throw. needs to know
 	 * the status of the scorecard to do correct decission
-	 * @param card
-	 * @param hand
 	 */
 	public static void fullHouse(Scorecard card, Hand hand) {
 		int roll = hand.getRoll();
@@ -134,7 +119,7 @@ public class GetCategories {
 			fourFilled = true;
 		}
 
-		AI.evalScores(hand.getHandArray(), countedDice);
+		AI.evalScores(hand, countedDice);
 		if (roll == 1) {
 			if (!upperFilled) {
 				for (Dice dice : hand.getDices()) {
@@ -171,11 +156,11 @@ public class GetCategories {
 		int i = 0;
 		int j = 0;
 
-		int[] countedDices = new int[6];
-		AI.countValues(hand.getHandArray(), countedDices);
+		int[] diceFreq = new int [AI.diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
-		for (int c = 0; c < countedDices.length; c++) {
-			if (countedDices[c] == 2) {
+		for (int c = 0; c < diceFreq.length; c++) {
+			if (diceFreq[c] == 2) {
 				if (i == 0) {
 					i = c + 1;
 				} else {
@@ -193,15 +178,16 @@ public class GetCategories {
 	}
 
 	public static void getFullHouse(Hand hand) {
-		int[] countedDices = new int[6];
-		AI.countValues(hand.getHandArray(), countedDices);
+		int[] diceFreq = new int [AI.diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+		
 		int valueToKeep;
-		int trissScore = AI.checkTripleScore(hand.getHandArray());
+		int trissScore = AI.threeOfAKindScore(hand);
 		if (trissScore != 0) {
 			valueToKeep = trissScore / 3;
 			int otherValue = 0;
 			for (int e = 5; e >= 2; e--) {
-				if (countedDices[e] == 1) {
+				if (diceFreq[e] == 1) {
 					otherValue = e + 1;
 					break;
 				}
@@ -216,17 +202,17 @@ public class GetCategories {
 
 		}
 
-		if (AI.doublePairScore(hand.getHandArray()) != 0) {
+		if (AI.twoPairScore(hand) != 0) {
 			twoPairToHouse(hand);
 			return;
 		}
 
-		int pairScore = AI.pairScore(hand.getHandArray());
+		int pairScore = AI.pairScore(hand);
 		if (pairScore != 0) {
 			valueToKeep = pairScore / 2;
 			int otherValue = 0;
 			for (int e = 5; e >= 2; e--) {
-				if (countedDices[e] == 1) {
+				if (diceFreq[e] == 1) {
 					otherValue = e + 1;
 					break;
 				}
@@ -242,8 +228,8 @@ public class GetCategories {
 
 		int i = 0;
 		int j = 0;
-		for (int c = countedDices.length - 1; c >= 0; c--) {
-			if (countedDices[c] == 1) {
+		for (int c = diceFreq.length - 1; c >= 0; c--) {
+			if (diceFreq[c] == 1) {
 				if (i == 0) {
 					i = c + 1;
 				} else {
@@ -262,14 +248,14 @@ public class GetCategories {
 	}
 
 	public static void getTwoPair(Hand hand) {
-		int[] countedDices = new int[6];
-		AI.countValues(hand.getHandArray(), countedDices);
+		int[] diceFreq = new int [AI.diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
 		int keep1 = 0;
 		int keep2 = 0;
 
 		for (int i = 5; i >= 0; i--) {
-			if (countedDices[i] > 0) {
+			if (diceFreq[i] > 0) {
 				if (keep1 == 0) {
 					keep1 = i + 1;
 				} else if (keep2 == 0) {
@@ -278,11 +264,11 @@ public class GetCategories {
 
 				if (keep1 != 0 && keep2 != 0) {
 					if (keep1 > keep2) {
-						if (countedDices[keep2 - 1] < countedDices[i]) {
+						if (diceFreq[keep2 - 1] < diceFreq[i]) {
 							keep2 = i + 1;
 						}
 					} else {
-						if (countedDices[keep1 - 1] < countedDices[i]) {
+						if (diceFreq[keep1 - 1] < diceFreq[i]) {
 							keep1 = i + 1;
 						}
 					}
@@ -295,8 +281,8 @@ public class GetCategories {
 				//	System.out.println("kastar om: "+ dice.value);
 				dice.throwDice();
 			}
-			if (countedDices[dice.faceValue -1] > 2){
-				countedDices[dice.faceValue-1] --;
+			if (diceFreq[dice.faceValue -1] > 2){
+				diceFreq[dice.faceValue-1] --;
 				//System.out.println("kastar om: "+ dice.value);
 				dice.throwDice();
 			}

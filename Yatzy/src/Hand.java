@@ -44,7 +44,7 @@ public class Hand {
 	public int[] getHandArray(){
 		int[] hand = new int[dices.length];
 
-		for(int i =0; i < dices.length; i ++){
+		for(int i = 0; i < dices.length; i ++){
 			hand[i] = dices[i].getDiceValue();
 		}
 		Arrays.sort(hand);

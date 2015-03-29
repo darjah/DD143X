@@ -1,45 +1,40 @@
-import java.util.*;
+import java.util.LinkedList;
 
-public class EarlyStrategy {
-	/**
-	 * calculates what value should be saved, does not consider straights since straight on first throw 
-	 * @param card
-	 * @param diceValueFrequency an int[AI.diceMaxValue] were each position holds an int representing the number of dices having that value
-	 * @return 
-	 */
-	public static int play(Scorecard card, Hand hand) {
+public class EarlyStrategy{
+	public static int play(Scorecard card, Hand hand){
 		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 		int valueToKeep = -1;
 		int[] diceFrequency = new int[AI.diceMaxValue];
 		diceFrequency = hand.diceFrequency(hand.getHandArray(), diceFrequency);
 
-		//RÃ¤knar ner frÃ¥n 6 frekvensen fÃ¶r varje tÃ¤rning, om >=3 och inte i protokollet -> lÃ¤gg i  
-		for (int diceValueTemp = AI.diceMaxValue; diceValueTemp >= 1; diceValueTemp--) {
-			if ((diceFrequency[diceValueTemp-1] >= 3) && (freeCategories.contains(diceValueTemp-1))) {
+		//Räknar ner från 6 frekvensen för varje tärning, om >=3 och inte i protokollet -> lägg i  
+		for(int diceValueTemp = AI.diceMaxValue; diceValueTemp >= 1; diceValueTemp--){
+			if((diceFrequency[diceValueTemp-1] >= 3) && (freeCategories.contains(diceValueTemp-1))){
 				valueToKeep = diceValueTemp;
 				return diceValueTemp;
 			}
 		}
 
 		if(card.possibleToGetBonus()){
-			//Om freq < 3 sÃ¥ finns det tvÃ¥ fall
-			//Ã–ver onPar, lÃ¤gg i lÃ¤gsta
-			if (card.onPar()==1){
+			//Om freq < 3 så finns det två fall
+			//Över onPar, lägg i lägsta
+			if(card.onPar()==1){
+				for(int diceValueTemp = 0; diceValueTemp < AI.diceMaxValue; diceValueTemp++){
+					if(freeCategories.contains(diceValueTemp)){
+						valueToKeep = diceValueTemp;
+						return diceValueTemp;
+					}
+				}
 
 			}
-			//Om onPar, lÃ¤gg i lÃ¤gsta
-			if (card.onPar()==0){
-
-			}
-			//Ej onPar, offra nedre delen av protokollet
-			else {
-				//Fixa prioritetslista fÃ¶r vad som ska offras fÃ¶rst
+			
+			//Ej onPar eller onPar, offra nedre delen av protokollet
+			else if(card.onPar()==0 || card.onPar()==-1){
+				NullEntry.zeroDown(card);
 			}
 		}
-		//NÃ¤r vi inte lÃ¤ngre kan fÃ¥ bonusen, anvÃ¤nd resterande 1-6 som nollbrickor
-		else
-		{
-			//MidStrategy.play();
+		else{
+			NullEntry.zeroUp(card);
 		}
 		return valueToKeep;
 	}

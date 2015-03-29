@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.LinkedList;
 
 public class Scorecard {
 	public static final int ones = 0;
@@ -8,7 +8,7 @@ public class Scorecard {
 	public static final int fives = 4;
 	public static final int sixes = 5;	
 	public static final int bonus = 50;
-	public int pointsToBonus = 63;
+	public static final int pointsToBonus = 63;
 
 	public static final int pair = 6;
 	public static final int twoPair = 7;
@@ -52,13 +52,16 @@ public class Scorecard {
 				parScore += i * 3;
 			}
 		}
-
+		
+		//Om över onPar, ret 1
 		if (parScore > pointsToBonus) {
 			return 1;
 		}
+		//Om onPar, ret 0
 		if (parScore == pointsToBonus) {
 			return 0;
 		}
+		//Om under onPar, ret -1
 		return -1;
 	}
 	

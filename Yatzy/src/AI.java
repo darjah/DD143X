@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.LinkedList;
 
 public class AI {
@@ -10,259 +9,234 @@ public class AI {
 		LinkedList<Integer> emptyCategories = card.getEmptyCategories();
 		int turn = 15 - emptyCategories.size() + 1;
 
-		if (turn <= earlyGame ){
-			EarlyStrategy.play(card, hand);
-			//Lägg till hantering för nollning/lägg in tärning<3
+		if(turn <= earlyGame){
+			if(card.possibleToGetBonus()){
+				EarlyStrategy.play(card, hand);
+			}
+			else{
+				MidStrategy.play(card, hand);
+			}
 			return;
 		}
 
-		if (turn <= midGame){
-			MidStrategy.play(hand, card);
+		else if(turn <= midGame){
+			MidStrategy.play(card, hand);
 			return;
+		}
+		else{
+			EndStrategy.play(card, hand);
+			return;
+		}
+	}
+
+	public static void evalScores(Hand hand, int[] thisTurnScorecard) {
+		//Po�ng f�r kategori 1-6.
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+		for(int i = 0; i < diceMaxValue; i++){
+			thisTurnScorecard[i] = diceFreq[i]*(i+1);
+		}
+
+		thisTurnScorecard[Scorecard.pair] = pairScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.twoPair] = twoPairScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.threeOfAKind] = threeOfAKindScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.fourOfAKind] = fourOfAKindScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.smallStraight] = smallStraightScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.largeStraight] = largeStraightScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.fullHouse] = fullHouseScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.chance] = chansScore(hand);
+		////Printer.printArray(scoreScore);
+		thisTurnScorecard[Scorecard.yatzy] = yatzyScore(hand);
+		////Printer.printArray(scoreScore);
+	}
+
+	public static int pairScore(Hand hand){
+		int highestScore = 0;
+		int[] scores = new int[diceMaxValue];
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+
+		//Hitta paren genom att kolla frekvenslistan, par om >=2
+		for(int i = 0; i < diceMaxValue; i++){
+			if(diceFreq[i] >= 2){
+				scores[i] = (i+1)*2;
+			}
+		}
+
+		//Plocka ut st�rsta paret
+		for(int j = 0; j < diceMaxValue; j++){
+			if(scores[j] >= highestScore){
+				highestScore = scores[j];
+			}
+		}
+		return highestScore;
+	}
+
+	public static int twoPairScore(Hand hand){
+		int highestScore = 0;
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+
+		boolean firstPair = false;
+		int firstPairEyes = 0;
+
+		for(int i = diceMaxValue; i >= 0; i--){
+			if(diceFreq[i-1] >= 2 && !firstPair){
+				firstPair = true; //F�rsta paret hittat
+				firstPairEyes = i;	//Val�r p� f�rsta paret	
+			}
+			else if(diceFreq[i-1] >= 2 && firstPair){
+				highestScore = firstPairEyes*2 + i*2;
+			}
 		}	
-		EndStrategy.play(card, hand);
+		return highestScore;
 	}
 
-	public static void evalScores(int[] diceValues, int[] scoreScore) {
-		// poäng för lika värden.
-		for (int i = 1; i <= diceMaxValue; i++) {
-			int score = numberScore(diceValues, i);
-			scoreScore[i - 1] = score;
-		}
-
-		scoreScore[Scorecard.pair] = pairScore(diceValues);
-		//////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.twoPair] = doublePairScore(diceValues);
-		//////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.threeOfAKind] = checkTripleScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.fourOfAKind] = checkQuadruopleScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.smallStraight] = smallStraightScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.largeStraight] = largeStraightScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.fullHouse] = fullHouseScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.chance] = chansScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-		scoreScore[Scorecard.yatzy] = yatzyScore(diceValues);
-		//		////Printer.printArray(scoreScore);
-
-	}
-
-	/**
-	 * beräkna poäng för #of a kind. summerar poängen för de antal // tärningar
-	 * som // har värdet number
-	 **/
-	public static int numberScore(int[] dices, int number) {
+	public static int threeOfAKindScore(Hand hand){
 		int score = 0;
-		for (int i : dices) {
-			if (i == number) {
-				score += i;
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+
+		//Hitta trissen genom att kolla frekvenslistan, triss om >=3
+		for(int i = 0; i < diceMaxValue; i++){
+			if(diceFreq[i] >= 3){
+				score = (i+1)*3;
 			}
 		}
 		return score;
 	}
 
-	// alla 6:or är för att det finns 6 olika värden på tärningar.
-	public static int pairScore(int[] dices) {
-		int[] valueTimes = new int[diceMaxValue];
-		int[] scores = new int[diceMaxValue];
+	public static int fourOfAKindScore(Hand hand){
+		int score = 0;
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
-		// [0] håller poängen
-		// [1] håller vilken valör det var som gav poängen
-		int returning = 0;
-
-		// räknar de olika valörerna
-		countValues(dices, valueTimes);
-
-		// beäkna poängen för de olika paren,
-		// måste vara par
-		for (int j = 0; j < diceMaxValue; j++) {
-			if (valueTimes[j] == 2) {
-				scores[j] = (j + 1) * 2;
+		//Hitta fyrtal genom att kolla frekvenslistan, fyrtal om >=4
+		for(int i = 0; i < diceMaxValue; i++){
+			if(diceFreq[i] >= 4){
+				score = (i+1)*4;
 			}
-		}
-
-		// beräkna vilken poäng som är störst.
-		for (int k = 0; k < diceMaxValue; k++) {
-			if (scores[k] >= returning) {
-				returning = scores[k];
-			}
-		}
-		return returning;
-	}
-	public static void countValues(int[] dices, int[] valueTimes) {
-		for (int i : dices) {
-			// simply add 1 to the corresponding place in the answer array
-			valueTimes[i - 1]++;
-		}
-	}
-	public static int doublePairScore(int[] dices) {
-		int returning = 0;
-		int[] valueTimes = new int[diceMaxValue];
-		countValues(dices, valueTimes);
-		boolean firstPair = false;
-
-		int eyeCounter = 1;
-		int firstPairEyes = 0;
-
-		for (int i : valueTimes) {
-			if (i >= 2 && !firstPair) {
-				firstPairEyes = eyeCounter;
-				firstPair = true; // we have found our first pair
-			} else if (i >= 2 && firstPair) {
-				return firstPairEyes * 2 + eyeCounter * 2;
-			}
-			eyeCounter++;
-		}
-		// if not 2 pair return 0
-		return returning;
+		}	
+		return score;
 	}
 
-	public static int checkTripleScore(int[] dices) {
-		int trippleDice = 1;
-		int[] valueTimes = new int[6];
-		countValues(dices, valueTimes);
-		for (int i : valueTimes) {
-			if (i >= 3) { // we have three of this dice, dice points indicated
-				// by trippleDice
-				return trippleDice * 3;
-			}
-			trippleDice++;
-		}
-		return 0;
-	}
-
-	public static int checkQuadruopleScore(int[] dices) {
-		int trippleDice = 1;
-		int[] valueTimes = new int[6];
-		countValues(dices, valueTimes);
-		for (int i : valueTimes) {
-			if (i >= 4) { // we have three of this dice, dice points indicated
-				// by trippleDice
-				return trippleDice * 4;
-			}
-			trippleDice++;
-		}
-		return 0;
-	}
-
-	public static int smallStraightScore(int[] hand) {
-		int returning = 0;
-		Arrays.sort(hand);
+	public static int smallStraightScore(Hand hand) {
+		int score = 0;
+		int[] thisHand = hand.getHandArray();
 		boolean smallStraightTrue = true;
-		for (int i = 0; i < 5; i++) {
-			if (hand[i] != i + 1) {
-				// This will only be false iff we dont have a small straight
-				// since dice i should have i as score, 1 index as is custom
-				// with board games
+
+		for(int i = 0; i < 5; i++){
+			if(thisHand[i] != (i+1)){
 				smallStraightTrue = false;
 			}
 		}
 
-		if (smallStraightTrue) {
-			returning = 15;
+		if(smallStraightTrue){
+			score = 15;
 		}
-		return returning;
+
+		return score;
 	}
 
-	public static int largeStraightScore(int[] hand) {
-		int returning = 0;
-		boolean smallStraightTrue = true;
-		for (int i = 0; i < 5; i++) {
-			if (hand[i] != i + 2) {
-				// This will only be false iff we dont have a small straight
-				// since dice i should have i as score, 1 index as is custom
-				// with board games
-				smallStraightTrue = false;
+	public static int largeStraightScore(Hand hand){
+		int score = 0;
+		int[] thisHand = hand.getHandArray();
+		boolean largeStraightTrue = true;
+
+		for(int i = 0; i < 5; i++){
+			if(thisHand[i] != (i+2)){
+				largeStraightTrue = false;
 			}
 		}
 
-		if (smallStraightTrue) {
-			returning = 20;
+		if(largeStraightTrue){
+			score = 15;
 		}
-		return returning;
+
+		return score;
 	}
 
-	public static int fullHouseScore(int[] hand) {
-		int returning = 0;
+	public static int fullHouseScore(Hand hand) {
+		int score = 0;
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+
 		int pairEyes = 0;
 		int trippleEyes = 0;
-		int[] counted = new int[6];
-		countValues(hand, counted);
 
-		for (int i = 0; i < counted.length; i++) {
-			if (counted[i] == 2) {
+		for(int i = 0; i < diceMaxValue; i++){
+			if(diceFreq[i] == 2){
 				pairEyes = i + 1;
 			}
-			if (counted[i] == 3) {
+			if(diceFreq[i] == 3){
 				trippleEyes = i + 1;
 			}
 		}
 
-		if (pairEyes != 0 && trippleEyes != 0) {
-			returning = pairEyes * 2 + trippleEyes * 3;
+		if(pairEyes != 0 && trippleEyes != 0){
+			score = pairEyes * 2 + trippleEyes * 3;
 		}
-		return returning;
+
+		return score;
 	}
 
-	public static int chansScore(int[] hand) {
+	public static int chansScore(Hand hand){
 		int sum = 0;
-
-		for (int i : hand) {
+		for(int i : hand.getHandArray()){
 			sum += i;
 		}
 		return sum;
 	}
 
-	public static int yatzyScore(int[] hand) {
-		int[] evaluated = new int[diceMaxValue];
-		countValues(hand, evaluated);
-		for (int i : evaluated) {
-			if (i == 5) {
+	public static int yatzyScore(Hand hand){
+		int[] diceFreq = new int [diceMaxValue];
+		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
+
+		for(int i : diceFreq) {
+			if(i == 5){
 				return 50;
 			}
 		}
+
 		return 0;
 	}
 
 	public static boolean catchHand(Hand hand, Scorecard card){
 		LinkedList<Integer> freeScores = card.getEmptyCategories();
-		////System.out.println(freeScores.toString());
 
 		// start with check if we have a straight.
-		int smallStraightScore = AI.smallStraightScore(hand.getHandArray());
-		////Printer.printArray(hand.getValueArray());
-		int bigStraightScore = AI.largeStraightScore(hand.getHandArray());
-		int weHaveYaatzy = AI.yatzyScore(hand.getHandArray());
+		int smallStraightScore = AI.smallStraightScore(hand);
+		int bigStraightScore = AI.largeStraightScore(hand);
+		int weHaveYaatzy = AI.yatzyScore(hand);
 
-		if ((smallStraightScore != 0)
-				&& (freeScores.contains(Scorecard.smallStraight))) {
+		if((smallStraightScore != 0) && (freeScores.contains(Scorecard.smallStraight))){
 			card.categories[Scorecard.smallStraight] = smallStraightScore;
 			return true;
 		}
-		if ((bigStraightScore != 0)
-				&& (freeScores.contains(Scorecard.largeStraight))) {
+		if((bigStraightScore != 0) && (freeScores.contains(Scorecard.largeStraight))){
 			card.categories[Scorecard.largeStraight] = bigStraightScore;
 			return true;
 		}
-
-		if ((weHaveYaatzy != 0) && (freeScores.contains(Scorecard.yatzy))) {
+		if((weHaveYaatzy != 0) && (freeScores.contains(Scorecard.yatzy))){
 			card.categories[Scorecard.yatzy] = weHaveYaatzy;
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean fullHouse(Scorecard card , Hand hand){
-		int score = fullHouseScore(hand.getHandArray());
-		if (score != 0 && card.categories[Scorecard.fullHouse] == -1){
+	public static boolean fullHouse(Scorecard card, Hand hand){
+		int score = fullHouseScore(hand);
+		if(score != 0 && card.categories[Scorecard.fullHouse] == -1){
 			card.categories[Scorecard.fullHouse] = score;
 			return true;
 		}
 		return false;
 	}
-
 }

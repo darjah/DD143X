@@ -2,7 +2,7 @@ import java.util.LinkedList;
 
 public class MidStrategy {
 
-	public static void play(Hand hand, Scorecard card) {
+	public static void play(Scorecard card, Hand hand) {
 		boolean[] betOnThis = new boolean[15];
 
 		for (int i = 0; i < betOnThis.length; i++) {
@@ -85,7 +85,7 @@ public class MidStrategy {
 	public static void agressive(Scorecard card, Hand hand) {
 		LinkedList<Integer> freeScores = card.getEmptyCategories();
 		// the player need every point possible
-
+		
 		int[] evalScores = new int[card.categories.length];
 		AI.evalScores(hand.getHandArray(), evalScores);
 
@@ -186,7 +186,7 @@ public class MidStrategy {
 
 			// NullEntry
 			////System.out.println("NullEntry");
-			NullEntry.nolla(card, hand);
+			NullEntry.nullEntry(card);
 			
 			return;
 
@@ -293,7 +293,7 @@ public class MidStrategy {
 		}
 
 
-		NullEntry.nolla(card, hand);
+		NullEntry.nullEntry(card);
 
 	}
 	
@@ -347,7 +347,7 @@ public class MidStrategy {
 			return;
 		}
 
-		NullEntry.nolla(card, hand);
+		NullEntry.nullEntry(card);
 
 	}
 
@@ -423,7 +423,7 @@ public class MidStrategy {
 
 		boolean satteUppe = fillUpper(card, hand);
 		if (!satteUppe) {
-			NullEntry.nollaUppe(card);
+			NullEntry.zeroUp(card);
 		}
 
 	}

@@ -1,9 +1,7 @@
 //Part of the AI to caluculate which dices to rethrow and rethows them
 public class GetCategories {
-
 	/**
 	 * rethrows every dice in @hand that doesnt have the value @value
-	 * 
 	 * @param hand
 	 * @param value
 	 */
@@ -71,7 +69,6 @@ public class GetCategories {
 
 	/**
 	 * rethrows every surplus copy of a dice value in order to get a straight
-	 * 
 	 * @param hand
 	 */
 	public static void largeStraight(Hand hand) {
@@ -89,7 +86,6 @@ public class GetCategories {
 
 	/**
 	 * rethrows every surplus copy of a dice value in order to get a straight
-	 * 
 	 * @param hand
 	 */
 	public static void smallStraight(Hand hand) {
@@ -108,7 +104,6 @@ public class GetCategories {
 	/**
 	 * Whatto do in case of full house on first or second throw. needs to know
 	 * the status of the scorecard to do correct decission
-	 * 
 	 * @param card
 	 * @param hand
 	 */

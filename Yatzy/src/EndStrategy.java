@@ -59,7 +59,7 @@ public class EndStrategy {
 					return;
 				}
 			}
-			NullEntry.nollaNere(card);
+			NullEntry.zeroDown(card);
 			return;
 		}
 
@@ -72,7 +72,7 @@ public class EndStrategy {
 			if (AI.catchHand(hand, card)) {
 				return;
 			}
-			NullEntry.nollaNere(card);
+			NullEntry.zeroDown(card);
 			return;
 
 		}
@@ -86,7 +86,7 @@ public class EndStrategy {
 			if (AI.catchHand(hand, card)) {
 				return;
 			}
-			NullEntry.nollaNere(card);
+			NullEntry.zeroDown(card);
 			return;
 		}
 
@@ -102,7 +102,7 @@ public class EndStrategy {
 			if (AI.catchHand(hand, card)) {
 				return;
 			}
-			NullEntry.nollaNere(card);
+			NullEntry.zeroDown(card);
 			return;
 		}
 
@@ -151,7 +151,7 @@ public class EndStrategy {
 				card.categories[Scorecard.twoPair] = score;
 				return;
 			}
-			NullEntry.nolla(card, hand);
+			NullEntry.nullEntry(card);
 			return;
 
 		}
@@ -290,7 +290,7 @@ public class EndStrategy {
 			}
 
 			// nolla
-			NullEntry.nolla(card, hand);
+			NullEntry.nullEntry(card);
 			return;
 
 		}

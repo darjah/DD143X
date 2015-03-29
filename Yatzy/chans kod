@@ -1,0 +1,12 @@
+int chans = AI.chansScore(hand.getHandArray());
+//Om chans är tom och handens summa är > 19
+if(card.categories[Scorecard.chance] == -1 && chans > 19){
+	card.categories[Scorecard.chance] = chans;
+	return;
+}
+
+//Om chans är sista lediga kategorin
+if(card.getEmptyCategories().size() == 1 && card.categories[Scorecard.chance] == -1){
+	card.categories[Scorecard.chance] = chans;
+	return;
+}

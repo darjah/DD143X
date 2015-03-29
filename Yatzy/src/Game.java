@@ -10,11 +10,11 @@ public class Game {
 
 			AI.ai(card, hand);
 
-			if (roundCounter > 16){
+			if (roundCounter == 15){
 				//Printer.printArray(scoreCard.scoreValues);
-				throw new Exception("To many Rounds");
+				break;
+				//throw new Exception("To many Rounds");
 			}
-			//System.out.println(roundCounter);
 			roundCounter ++;
 		}
 		

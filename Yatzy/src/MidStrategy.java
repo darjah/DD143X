@@ -114,7 +114,7 @@ public class MidStrategy {
 	public static void twoPairMid(Scorecard card, Hand hand, LinkedList<Integer> freeScores, int[] evalScores){
 		// TODO vi har tva par, kak ledigt
 
-		GetCategories.twoPairToHouse(hand);
+		GetCategories.twoPairToFullHouse(hand);
 		AI.evalScores(hand, evalScores);
 
 		// fångar kåk direkt om vi ligger under par, kan inte få par
@@ -122,7 +122,7 @@ public class MidStrategy {
 			return;
 		}
 
-		GetCategories.twoPairToHouse(hand);
+		GetCategories.twoPairToFullHouse(hand);
 
 		AI.evalScores(hand, evalScores);
 

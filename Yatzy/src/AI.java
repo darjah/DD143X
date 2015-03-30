@@ -10,17 +10,21 @@ public class AI {
 		int turn = 15 - emptyCategories.size() + 1;
 
 		if(turn <= earlyGame){
-			if(card.possibleToGetBonus()){
+			//if(card.possibleToGetBonus()){
+			System.out.println("enter early");
 				EarlyStrategy.play(card, hand);
-			}
+				System.out.println("early done");
+			/*}
 			else{
 				MidStrategy.play(card, hand);
-			}
+			}*/
 			return;
 		}
 
 		else if(turn <= midGame){
+			System.out.println("enter mid");
 			MidStrategy.play(card, hand);
+			System.out.println("mid done");
 			return;
 		}
 		else{

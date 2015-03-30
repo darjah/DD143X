@@ -9,7 +9,7 @@ public class Main {
 			try {
 				Game.playGame();
 			} catch (Exception e) {
-				gameCounter --;
+				//gameCounter --;
 				errors ++;
 			}
 		}

@@ -12,7 +12,35 @@ public class MidStrategy {
 		boolean checked = AI.catchHand(hand, card);
 		if(checked){
 			return;
-		}		
+		}
+		System.out.println("börjar");
+		overPar(card, hand);
+		return;
+		// -1 if the player is under par
+		// 0 if the player is on par
+		// else the player is over par
+		/*if (card.onPar() == -1) {
+			underPar(card, hand);
+			return;
+		} else if (card.onPar() == 0) {
+			onPar(card, hand);
+			return;
+		} else {
+			overPar(card, hand);
+			return;
+		}*/
+	}
+
+	/*public static void underPar(Scorecard card, Hand hand) {
+		// if it is possible to get on par
+		if (card.possibleToGetBonus()) {
+			// fill go for the top according to early game
+			EarlyStrategy.play(card, hand);
+			return;
+		} else {
+			agressive(card, hand);
+
+		}
 	}
 
 	public static void onPar(Scorecard card, Hand hand){
@@ -39,6 +67,54 @@ public class MidStrategy {
 		GetCategories.allOfAKind(hand, betOn);
 
 		allOfAKindDefensive(card, hand, betOn);
+	}*/
+
+	public static void overPar(Scorecard card, Hand hand) {
+		System.out.println("här");
+		agressive(card, hand);
+	}
+
+	public static void agressive(Scorecard card, Hand hand){
+		System.out.println("nu kör vi typ");
+		LinkedList<Integer> freeScores = card.getEmptyCategories();
+
+		int[] evalScores = new int[card.categories.length];
+		AI.evalScores(hand, evalScores);
+
+		//Fånga kåk direkt
+		if(AI.fullHouse(card, hand)){
+			System.out.println("a");
+			return;
+		}
+
+		if(evalScores[Scorecard.twoPair] != 0 && (freeScores.contains(Scorecard.twoPair) || freeScores.contains(Scorecard.fullHouse))){
+			System.out.println("b");
+			twoPairMid(card, hand, freeScores, evalScores);
+			return;
+		}
+
+		if(stegCheck(hand)){
+			System.out.println("c");
+			stegeKolla(card, hand, freeScores);
+			return;
+		}
+
+		int keep = betOnInt(card, hand);
+
+		GetCategories.allOfAKind(hand, keep);
+		if(AI.catchHand(hand, card)){
+			System.out.println("d");
+			return;
+		}
+
+		if(AI.fullHouse(card, hand)){
+			System.out.println("e");
+			return;
+		}
+
+		GetCategories.allOfAKind(hand, keep);
+		System.out.println("går in i allOfAKindAgressive");
+		allOfAKindAgressive(card, hand, keep);
 	}
 
 	public static int uppCheck(Scorecard card, Hand hand){
@@ -74,45 +150,8 @@ public class MidStrategy {
 		return betOn;
 	}
 
-	public static void agressive(Scorecard card, Hand hand){
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
-		// the player need every point possible
-
-		int[] evalScores = new int[card.categories.length];
-		AI.evalScores(hand, evalScores);
-
-		// fÃ¥ngar kÃ¥k direkt om vi ligger under par, kan inte fÃ¥ par
-		if(AI.fullHouse(card, hand)){
-			return;
-		}
-
-		if(evalScores[Scorecard.twoPair] != 0 && (freeScores.contains(Scorecard.twoPair) || freeScores.contains(Scorecard.fullHouse))){
-			twoPairMid(card, hand, freeScores, evalScores);
-			return;
-		}
-
-		if(stegCheck(hand)){
-			stegeKolla(card, hand, freeScores);
-			return;
-		}
-
-		int keep = betOnInt(card, hand);
-
-		GetCategories.allOfAKind(hand, keep);
-		if(AI.catchHand(hand, card)){
-			return;
-		}
-		
-		if(AI.fullHouse(card, hand)){
-			return;
-		}
-
-		GetCategories.allOfAKind(hand, keep);
-		allOfAKindAgressive(card, hand, keep);
-	}
-
 	public static void twoPairMid(Scorecard card, Hand hand, LinkedList<Integer> freeScores, int[] evalScores){
-		// TODO vi har tva par, kak ledigt
+		//vi har tva par, kak ledigt
 
 		GetCategories.twoPairToFullHouse(hand);
 		AI.evalScores(hand, evalScores);
@@ -159,7 +198,7 @@ public class MidStrategy {
 			card.categories[Scorecard.pair] = evalScores[Scorecard.pair];
 			return;
 		}
-		
+
 		//NullEntry
 		NullEntry.nullEntry(card);
 		return;
@@ -170,7 +209,7 @@ public class MidStrategy {
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 		int value = 1;
-
+		System.out.println("var är vi?");
 		// omedlbart satsa pa mer en fyra av en sort
 		for(int l : diceFreq){
 			if(l >= 4){
@@ -211,13 +250,14 @@ public class MidStrategy {
 	}
 
 	public static void allOfAKindDefensive(Scorecard card, Hand hand, int kept){
+		System.out.println("inne");
 		LinkedList<Integer> freeScores = card.getEmptyCategories();
 
 		boolean checked = AI.catchHand(hand, card);
 		if(checked){
 			return;
 		}
-		
+
 		int[] evalScore = new int[15];
 		AI.evalScores(hand, evalScore);
 
@@ -266,7 +306,7 @@ public class MidStrategy {
 		if(checked){
 			return;
 		}
-		
+
 		int[] evalScore = new int[15];
 		AI.evalScores(hand, evalScore);
 
@@ -325,7 +365,7 @@ public class MidStrategy {
 				if(caught){
 					return;
 				}
-				
+
 				GetCategories.smallStraight(hand);
 				caught = AI.catchHand(hand, card);
 				if(caught){
@@ -342,7 +382,7 @@ public class MidStrategy {
 				if(caught){
 					return;
 				}
-				
+
 				GetCategories.largeStraight(hand);
 				caught = AI.catchHand(hand, card);
 				if(caught){
@@ -359,7 +399,7 @@ public class MidStrategy {
 			card.categories[Scorecard.twoPair] = evalScore[Scorecard.twoPair];
 			return;
 		}
-		
+
 		if(freeScores.contains(Scorecard.pair) && evalScore[Scorecard.pair] != 0){
 			card.categories[Scorecard.pair] = evalScore[Scorecard.pair];
 			return;

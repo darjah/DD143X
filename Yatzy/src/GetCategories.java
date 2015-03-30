@@ -10,7 +10,6 @@ public class GetCategories {
 		hand.rollCounter();
 	}
 
-	//DENNA ANVÄNDS INTE?!?!?!??
 	//rethrow a hand that has pair, tripple or quardruple to the higest value if there are more than two pairs.
 	public static void nrDices(Hand hand, int nrDices){
 		int[] diceFreq = new int [AI.diceMaxValue];
@@ -54,13 +53,13 @@ public class GetCategories {
 
 	//Kastar om tärningarna för att kunna få en liten stege
 	public static void smallStraight(Hand hand){
-		boolean[] haveThisValue = { false, false, false, false, false, false };
-		for (Dice dice : hand.getDices()) {
-			if(haveThisValue[dice.getDiceValue() - 1] || dice.faceValue == 6) {
+		boolean[] straight = { false, false, false, false, false, false };
+		for (Dice dice : hand.getDices()){
+			if(straight[dice.getDiceValue() - 1] || dice.faceValue == 6){
 				dice.throwDice();
 			} 
 			else{
-				haveThisValue[dice.getDiceValue() - 1] = true;
+				straight[dice.getDiceValue() - 1] = true;
 			}
 		}
 		hand.rollCounter();
@@ -68,18 +67,13 @@ public class GetCategories {
 	
 	//Kastar om tärningarna för att kunna få en stor stege
 	public static void largeStraight(Hand hand) {
-		boolean[] straight = {false, false, false, false, false, false};
-		int[] handArray = hand.getHandArray();
-		
-		for(int i = 1; i <= 6; i++){
-			if(handArray[i-1] == i){
-				straight[i-1] = true;
-			}
-		}
-		
-		for(Dice dice : hand.getDices()){
-			if(!straight[dice.getDiceValue() - 1] || dice.faceValue == 1) {
+		boolean[] straight = { false, false, false, false, false, false };
+		for (Dice dice : hand.getDices()){
+			if(straight[dice.getDiceValue() - 1] || dice.faceValue == 1){
 				dice.throwDice();
+			} 
+			else{
+				straight[dice.getDiceValue() - 1] = true;
 			}
 		}
 		hand.rollCounter();

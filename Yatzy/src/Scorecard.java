@@ -45,7 +45,7 @@ public class Scorecard {
 	public int onPar() {
 		int parScore = 0;
 
-		for (int i = 0; i <= sixes; i++) {
+		for (int i = 0; i < sixes; i++) {
 			if (categories[i] >= 0) {
 				parScore += categories[i];
 			} else {

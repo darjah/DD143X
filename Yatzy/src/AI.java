@@ -5,26 +5,23 @@ public class AI {
 	final static public int earlyGame = 6;
 	final static public int midGame = 11;
 
-	public static void ai(Scorecard card, Hand hand) {
+	public static void play(Scorecard card, Hand hand) {
 		LinkedList<Integer> emptyCategories = card.getEmptyCategories();
 		int turn = 15 - emptyCategories.size() + 1;
 
+		//emptyCategories.contains(0) || emptyCategories.contains(1) || emptyCategories.contains(2) || emptyCategories.contains(3) || emptyCategories.contains(5) || emptyCategories.contains(5)
 		if(turn <= earlyGame){
-			//if(card.possibleToGetBonus()){
-			System.out.println("enter early");
+			if(card.possibleToGetBonus()){
 				EarlyStrategy.play(card, hand);
-				System.out.println("early done");
-			/*}
+			}
 			else{
 				MidStrategy.play(card, hand);
-			}*/
+			}
 			return;
 		}
 
 		else if(turn <= midGame){
-			System.out.println("enter mid");
 			MidStrategy.play(card, hand);
-			System.out.println("mid done");
 			return;
 		}
 		else{
@@ -40,11 +37,9 @@ public class AI {
 		for(int i = 0; i < diceMaxValue; i++){
 			thisTurnScorecard[i] = diceFreq[i]*(i+1);
 		}
-		//System.out.println("inne");
+		
 		thisTurnScorecard[Scorecard.pair] = pairScore(hand);
-		//System.out.println("par kollade");
 		thisTurnScorecard[Scorecard.twoPair] = twoPairScore(hand);
-		//System.out.println("två par kollade");
 		thisTurnScorecard[Scorecard.threeOfAKind] = threeOfAKindScore(hand);
 		thisTurnScorecard[Scorecard.fourOfAKind] = fourOfAKindScore(hand);
 		thisTurnScorecard[Scorecard.smallStraight] = smallStraightScore(hand);
@@ -52,8 +47,6 @@ public class AI {
 		thisTurnScorecard[Scorecard.fullHouse] = fullHouseScore(hand);
 		thisTurnScorecard[Scorecard.chance] = chansScore(hand);
 		thisTurnScorecard[Scorecard.yatzy] = yatzyScore(hand);
-		//Printer.printArray(scoreScore);
-		//System.out.println("klar");
 	}
 
 	public static int pairScore(Hand hand){
@@ -75,8 +68,6 @@ public class AI {
 				highestScore = scores[j];
 			}
 		}
-		//System.out.println("kommer vi inte hit?");
-		System.out.println(highestScore);
 		return highestScore;
 	}
 
@@ -87,17 +78,16 @@ public class AI {
 
 		boolean firstPair = false;
 		int firstPairEyes = 0;
-		//System.out.println("inne i tvåpar");
+		
 		for(int i = diceMaxValue; i > 0; i--){
 			if(diceFreq[i-1] >= 2 && !firstPair){
 				firstPair = true; //Första paret hittat
 				firstPairEyes = i;	//Valör på första paret	
 			}
 			else if(diceFreq[i-1] >= 2 && firstPair){
-				highestScore = firstPairEyes*2 + i*2;
+				highestScore = firstPairEyes*2 + i*2; //Andra paret hittat
 			}
-		}	
-		//System.out.println(highestScore);
+		}
 
 		return highestScore;
 	}
@@ -214,7 +204,7 @@ public class AI {
 	public static boolean catchHand(Hand hand, Scorecard card){
 		LinkedList<Integer> freeScores = card.getEmptyCategories();
 
-		// start with check if we have a straight.
+		//Kolla om vi har stege eller yatzy
 		int smallStraightScore = AI.smallStraightScore(hand);
 		int largeStraightScore = AI.largeStraightScore(hand);
 		int yatzyScore = AI.yatzyScore(hand);
@@ -223,17 +213,20 @@ public class AI {
 			card.categories[Scorecard.smallStraight] = smallStraightScore;
 			return true;
 		}
+		
 		if((largeStraightScore != 0) && (freeScores.contains(Scorecard.largeStraight))){
 			card.categories[Scorecard.largeStraight] = largeStraightScore;
 			return true;
 		}
+		
 		if((yatzyScore != 0) && (freeScores.contains(Scorecard.yatzy))){
 			card.categories[Scorecard.yatzy] = yatzyScore;
 			return true;
 		}
 		return false;
 	}
-
+	
+	//Kolla om vi har en kåk och placerar den i protokollet
 	public static boolean fullHouse(Scorecard card, Hand hand){
 		int score = fullHouseScore(hand);
 		if(score != 0 && card.categories[Scorecard.fullHouse] == -1){
@@ -244,7 +237,7 @@ public class AI {
 	}
 
 
-	//Beräkna poäng för #of a kind. summerar poängen för de antal tärningar som har värdet number
+	//Beräkna poäng för one-of-a-kind. Summerar poängen för de tärningar som har det givna värdet number, BORDE FLYTTAS TILL HAND?
 	public static int numberScore(int[] dices, int number) {
 		int score = 0;
 		for (int i : dices) {

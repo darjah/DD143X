@@ -1,29 +1,23 @@
 import java.util.LinkedList;
-public class EndStrategy {
 
-	public static void play(Scorecard card, Hand hand) {
+public class EndStrategy {
+	public static void play(Scorecard card, Hand hand){
 		agressive(card, hand);
 	}
 
-	public static void agressive(Scorecard card, Hand hand) {
+	public static void agressive(Scorecard card, Hand hand){
 		LinkedList<Integer> emptyCategories = card.getEmptyCategories();
-		// the player need every point possible
-
 		int[] evalScores = new int[card.categories.length];
 		AI.evalScores(hand, evalScores);
 
-		// f√•ngar k√•k direkt om vi ligger under par, kan inte f√• par
-		if (AI.fullHouse(card, hand)) {
+		//FÂnga kÂk direkt
+		if(AI.fullHouse(card, hand)){
 			return;
 		}
 
-		if (evalScores[Scorecard.twoPair] != 0
-				&& (emptyCategories.contains(Scorecard.twoPair) || emptyCategories.contains(Scorecard.fullHouse))) {
-			//System.out.println("tva par poang: " + evalScores[ScoreCard.twoPair]);
-			//System.out.println("111");
+		if(evalScores[Scorecard.twoPair] != 0 && (emptyCategories.contains(Scorecard.twoPair) || evalScores[Scorecard.twoPair] != 0 && emptyCategories.contains(Scorecard.fullHouse))) {
 			MidStrategy.twoPairMid(card, hand, emptyCategories, evalScores);
 			return;
-
 		}
 
 		boolean wentForStraight = false;

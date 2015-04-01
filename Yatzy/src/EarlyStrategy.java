@@ -1,6 +1,6 @@
 import java.util.LinkedList;
 
-public class EarlyStrategy{
+public class EarlyStrategy {
 	public static void play(Scorecard card, Hand hand){
 		int[] diceFrequency = new int[AI.diceMaxValue];
 		diceFrequency = hand.diceFrequency(hand.getHandArray(), diceFrequency);
@@ -14,10 +14,18 @@ public class EarlyStrategy{
 		valueToKeep = valueToKeep(card, hand, diceFrequency);
 		GetCategories.allOfAKind(hand, valueToKeep);
 
-		//Då vi fortfarande kan få bonusen men minst ligger onPar
+		//Då vi inte hittade ett vettigt värde (freq < 3)
 		if(valueToKeep == -1){
 			NullEntry.zeroDown(card);
+			/*int[] evalScores = new int[card.categories.length];
+			AI.evalScores(hand, evalScores);
+
+			//Fånga kåk direkt
+			if(AI.fullHouse(card, hand)){
+				return;
+			}*/
 		}
+		
 		//Räkna ut slutgiltiga poängen för handen baserat på värdet vi satsade på
 		else{
 			int score = 0;
@@ -49,8 +57,8 @@ public class EarlyStrategy{
 			}
 			return valueToKeep;
 		}
-		
-		//När vi kastar om tärningarna den sista gången
+
+		//När vi har kastat om tärningarna 3 ggr
 		else{
 			//Om >=3 och inte i protokollet -> spara i valueToKeep och ret  
 			for(int diceValueTemp = AI.diceMaxValue; diceValueTemp >= 1; diceValueTemp--){
@@ -60,10 +68,13 @@ public class EarlyStrategy{
 				}
 			}
 			
-			//Om diceValue < 3 men fortfarande kan få bonusen
-			if(card.possibleToGetBonus()){
+			return valueToKeep;
+			
+			//Om diceFreq < 3 men fortfarande kan få bonusen, kolla om handen kan placeras i nerdre delen, annars nolla
+			//if(card.possibleToGetBonus()){
+				//TODO borde bara ret -1, kolla sedan i play om det är möjligt att få bonuen eller inte och hantera på samma sätt som beskrivet nedan
 				//Över onPar, lägg i lägsta
-				if(card.onPar()==1){
+				/*if(card.onPar()==1){
 					for(int diceValueTemp = 1; diceValueTemp <= AI.diceMaxValue; diceValueTemp++){
 						if(freeCategories.contains(diceValueTemp-1)){
 							valueToKeep = diceValueTemp;
@@ -75,18 +86,20 @@ public class EarlyStrategy{
 				//Ej onPar eller onPar men fortfarande kan få bonusen, offra nedre delen av protokollet
 				else if(card.onPar()==0 || card.onPar()==-1){
 					return valueToKeep;
-				}
-			}
+				}*/
+				//TODO lägg in koll för handen om den kan placeras i nedre del
+				//TODO om inte, nolla nedre delen
+			//}
 
-			//Då vi inte längre kan få bonusen
-			int highestFreq = 0;
+			//Då vi inte längre kan få bonusen, kolla om handen kan läggas i nedre delen annars lägg i det bästa i övre halvan
+			//TODO lägg in koll för handen om den kan placeras i nedre del
+			/*int highestValue = 0;
 			for(int diceValueTemp = AI.diceMaxValue; diceValueTemp > 0 ; diceValueTemp--){
-				if((diceFreq[diceValueTemp-1] > highestFreq) && (freeCategories.contains(diceValueTemp-1))){
-					highestFreq = diceFreq[diceValueTemp-1];
+				if((diceFreq[diceValueTemp-1]*diceValueTemp > highestValue) && (freeCategories.contains(diceValueTemp-1))){
+					highestValue = diceFreq[diceValueTemp-1]*diceValueTemp;
 					valueToKeep = diceValueTemp;
 				}
-			}
-			return valueToKeep;
+			}*/
 		}
 	}
 }

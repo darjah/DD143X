@@ -4,16 +4,16 @@ public class Dice {
 	int faceValue;
 	Random random;
 
-	public Dice() {
+	public Dice(){
 		random = new Random();
 		throwDice();
 	}
 	
-	public void throwDice() {
+	public void throwDice(){
 		faceValue = random.nextInt(6) + 1;
 	}
 
-	public int getDiceValue() {
+	public int getDiceValue(){
 		return faceValue;
 	}
 

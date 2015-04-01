@@ -22,90 +22,91 @@ public class Scorecard {
 
 	int[] categories = new int[15];
 
-	public Scorecard() {
-		for (int i = 0; i < categories.length; i++) {
+	public Scorecard(){
+		for(int i = 0; i < categories.length; i++){
 			categories[i] = -1;
 		}
 	}
 
-	public boolean isScorecardFilled() {
+	public boolean isScorecardFilled(){
 		return getEmptyCategories().isEmpty();
 	}
 
-	public LinkedList<Integer> getEmptyCategories() {
+	public LinkedList<Integer> getEmptyCategories(){
 		LinkedList<Integer> emptyCategories = new LinkedList<Integer>();
-		for(int i = 0; i < categories.length; i++) {
-			if (categories[i] == -1) {
+		for(int i = 0; i < categories.length; i++){
+			if(categories[i] == -1){
 				emptyCategories.add(i);
 			}
 		}
 		return emptyCategories;
 	}	
 
-	public int onPar() {
+	public int onPar(){
 		int parScore = 0;
 
-		for (int i = 0; i < sixes; i++) {
-			if (categories[i] >= 0) {
+		for(int i = 0; i < sixes; i++){
+			if(categories[i] >= 0){
 				parScore += categories[i];
-			} else {
+			} 
+			else{
 				parScore += i * 3;
 			}
 		}
 		
 		//Om över onPar, ret 1
-		if (parScore > pointsToBonus) {
+		if(parScore > pointsToBonus){
 			return 1;
 		}
 		//Om onPar, ret 0
-		if (parScore == pointsToBonus) {
+		if(parScore == pointsToBonus){
 			return 0;
 		}
 		//Om under onPar, ret -1
 		return -1;
 	}
 	
-	public boolean possibleToGetBonus() {
+	public boolean possibleToGetBonus(){
 		int score = 0;
 
-		for (int i = 0; i <= sixes; i++) {
-			if (categories[i] >= 0) {
+		for(int i = 0; i <= sixes; i++){
+			if(categories[i] >= 0){
 				score += categories[i];
-			} else {
+			} 
+			else{
 				score += i * 5;
 			}
 		}
 
-		if (score >= pointsToBonus) {
+		if(score >= pointsToBonus){
 			return true;
 		}
 		return false;
 	}
 
-	public boolean doWeHaveBonus() {
+	public boolean doWeHaveBonus(){
 		int score = 0;
 
-		for (int i = 0; i <= sixes; i++) {
-			if (categories[i] >= 0) {
+		for(int i = 0; i < sixes; i++){
+			if(categories[i] >= 0){
 				score += categories[i];
 			}
 		}
 
-		if (score >= pointsToBonus) {
+		if(score >= pointsToBonus){
 			return true;
 		}
 		return false;
 	}
 
-	public int finalScore() {
+	public int finalScore(){
 		int total = 0;
-		for(int i = 0; i < categories.length; i++) {
+		for(int i = 0; i < categories.length; i++){
 			total += categories[i];
-			if (i == 5 && total >= pointsToBonus) {
-				total += bonus;
-			}
 		}
-		System.out.println("total" +total);
+		if(doWeHaveBonus()){
+			total += bonus;
+		}
 		return total;
 	}
 

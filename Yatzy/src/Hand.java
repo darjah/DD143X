@@ -51,7 +51,7 @@ public class Hand {
 		return hand;
 	}
 
-	public int[] diceFrequency(int[] dices, int[] frequencyArray) {
+	public int[] diceFrequency(int[] dices, int[] frequencyArray){
 		//Add 1 to the corresponding place in the frequency array
 		for(int i : dices) {
 			frequencyArray[i-1]++;

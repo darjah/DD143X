@@ -1,45 +1,22 @@
 import java.util.LinkedList;
 
 public class MidStrategy {
-	public static void play(Scorecard card, Hand hand) {
-		boolean[] betOnThis = new boolean[15];
-
-		for (int i = 0; i < betOnThis.length; i++) {
-			betOnThis[i] = false;
-		}
-
+	public static void play(Scorecard card, Hand hand){
 		//Fånga liten/stor stege eller yatzy direkt
 		boolean checked = AI.catchHand(hand, card);
 		if(checked){
 			return;
 		}
-		System.out.println("börjar");
-		overPar(card, hand);
-		return;
-		// -1 if the player is under par
-		// 0 if the player is on par
-		// else the player is over par
-		/*if (card.onPar() == -1) {
-			underPar(card, hand);
-			return;
-		} else if (card.onPar() == 0) {
+		
+		//0 if the player is on par
+		//else the player is over par
+		if(card.onPar() == 0){
 			onPar(card, hand);
 			return;
-		} else {
+		} 
+		else{
 			overPar(card, hand);
 			return;
-		}*/
-	}
-
-	/*public static void underPar(Scorecard card, Hand hand) {
-		// if it is possible to get on par
-		if (card.possibleToGetBonus()) {
-			// fill go for the top according to early game
-			EarlyStrategy.play(card, hand);
-			return;
-		} else {
-			agressive(card, hand);
-
 		}
 	}
 
@@ -67,63 +44,52 @@ public class MidStrategy {
 		GetCategories.allOfAKind(hand, betOn);
 
 		allOfAKindDefensive(card, hand, betOn);
-	}*/
+	}
 
 	public static void overPar(Scorecard card, Hand hand) {
-		//System.out.println("här");
 		agressive(card, hand);
 	}
 
 	public static void agressive(Scorecard card, Hand hand){
-		//System.out.println("nu kör vi typ");
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
-		//System.out.println("0");
+		//Hämta lediga kategorier
+		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 		int[] evalScores = new int[card.categories.length];
-		//System.out.println("oo");
 		AI.evalScores(hand, evalScores);
-		System.out.println("evalsckores:");
-		for(int i = 0; i<evalScores.length;i++){
-			System.out.println(evalScores[i]);
-		}
-		System.out.println("1");
+
 		//Fånga kåk direkt
 		if(AI.fullHouse(card, hand)){
-			System.out.println("a");
 			return;
 		}
 
-		if(evalScores[Scorecard.twoPair] != 0 && (freeScores.contains(Scorecard.twoPair) || freeScores.contains(Scorecard.fullHouse))){
-			System.out.println("b");
-			twoPairMid(card, hand, freeScores, evalScores);
+		//Om vi har två par och är ledig eller kåk är ledig, försök få en kåk
+		if(evalScores[Scorecard.twoPair] != 0 && (freeCategories.contains(Scorecard.twoPair) || freeCategories.contains(Scorecard.fullHouse))){
+			twoPairMid(card, hand, freeCategories, evalScores);
 			return;
 		}
 
+		//Om vi har början på en stege (saknar endast en tärning)
 		if(stegCheck(hand)){
-			System.out.println("c");
-			stegeKolla(card, hand, freeScores);
+			stegeKolla(card, hand, freeCategories);
 			return;
 		}
-		//System.out.println("4");
+
 		int keep = betOnInt(card, hand);
-		//System.out.println("5");
+
 		GetCategories.allOfAKind(hand, keep);
 		if(AI.catchHand(hand, card)){
-			System.out.println("d");
 			return;
 		}
 
 		if(AI.fullHouse(card, hand)){
-			System.out.println("e");
 			return;
 		}
 
 		GetCategories.allOfAKind(hand, keep);
-		//System.out.println("går in i allOfAKindAgressive");
 		allOfAKindAgressive(card, hand, keep);
 	}
 
 	public static int uppCheck(Scorecard card, Hand hand){
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
+		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
@@ -140,7 +106,7 @@ public class MidStrategy {
 				}
 			}
 
-			if(freeScores.contains(betOn - 1)){		
+			if(freeCategories.contains(betOn - 1)){		
 				return betOn;
 			}
 			checkedAllready.add(betOn);
@@ -155,66 +121,67 @@ public class MidStrategy {
 		return betOn;
 	}
 
-	public static void twoPairMid(Scorecard card, Hand hand, LinkedList<Integer> freeScores, int[] evalScores){
-		//vi har tva par, kak ledigt
-
+	//Används då vi har två par i handen och vill satsa på en kåk
+	public static void twoPairMid(Scorecard card, Hand hand, LinkedList<Integer> freeCategories, int[] evalScores){
 		GetCategories.twoPairToFullHouse(hand);
 		AI.evalScores(hand, evalScores);
 
-		// fÃ¥ngar kÃ¥k direkt om vi ligger under par, kan inte fÃ¥ par
+		//Fånga kåken
 		if(AI.fullHouse(card, hand)){
 			return;
 		}
 
 		GetCategories.twoPairToFullHouse(hand);
-
 		AI.evalScores(hand, evalScores);
 
-		// fÃ¥ngar kÃ¥k direkt om vi ligger under par, kan inte fÃ¥ par
+		//Fånga kåken
 		if(AI.fullHouse(card, hand)){
 			return;
 		}
 
-		// vi har tva par och den platsen ar ledig
-		if(freeScores.contains(Scorecard.twoPair)){
+		//Fångade inte kåken/har redan fångat den men kan placera tvåPar om den är ledig
+		if(freeCategories.contains(Scorecard.twoPair)){
 			card.categories[Scorecard.twoPair] = evalScores[Scorecard.twoPair];
 			return;
 		}
 
-		// vi har kak men kak ar upptagen.dvs fyller triss
-		if(evalScores[Scorecard.threeOfAKind] != 0 && freeScores.contains(Scorecard.threeOfAKind)){
+		//Fångade inte kåken/har redan fångat den men kan fylla triss
+		if(evalScores[Scorecard.threeOfAKind] != 0 && freeCategories.contains(Scorecard.threeOfAKind)){
 			card.categories[Scorecard.threeOfAKind] = evalScores[Scorecard.threeOfAKind];
 			return;
 		}
-
-		if(evalScores[Scorecard.pair] >= 8 && freeScores.contains(Scorecard.pair)){
+		
+		//Fångade inte kåken/har redan fångat den men kan fylla par (par i 4 minst)
+		if(evalScores[Scorecard.pair] >= 8 && freeCategories.contains(Scorecard.pair)){
 			card.categories[Scorecard.pair] = evalScores[Scorecard.pair];
 			return;
 		}
-
+		
+		//Ingen av ovastående kategorier var lediga, fyll i den som är ledig
 		for(int d = 0; d < 6; d++){
-			if(evalScores[d] != 0 && freeScores.contains(d)){
+			if(evalScores[d] != 0 && freeCategories.contains(d)){
 				card.categories[d] = evalScores[d];
 				return;
 			}
 		}
-
-		if(freeScores.contains(Scorecard.pair)){
+		
+		//Om vi har ett par i <= 3or
+		if(freeCategories.contains(Scorecard.pair)){
 			card.categories[Scorecard.pair] = evalScores[Scorecard.pair];
 			return;
 		}
 
-		//NullEntry
+		//I värsta fall, nolla
 		NullEntry.nullEntry(card);
 		return;
 	}
 
 	public static int betOnInt(Scorecard card, Hand hand){
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
+		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 		int value = 1;
-		//System.out.println("var är vi?");
+		
 		// omedlbart satsa pa mer en fyra av en sort
 		for(int l : diceFreq){
 			if(l >= 4){
@@ -233,7 +200,7 @@ public class MidStrategy {
 			}
 		}
 
-		boolean freeUpThere = freeScores.contains(highestDice - 1);
+		boolean freeUpThere = freeCategories.contains(highestDice - 1);
 		if(freeUpThere){
 			return highestDice;
 		}
@@ -247,7 +214,7 @@ public class MidStrategy {
 			}
 		}
 
-		freeUpThere = freeScores.contains(highestDice - 1);
+		freeUpThere = freeCategories.contains(highestDice - 1);
 		if(freeUpThere){
 			return highestDice;
 		}
@@ -255,8 +222,7 @@ public class MidStrategy {
 	}
 
 	public static void allOfAKindDefensive(Scorecard card, Hand hand, int kept){
-		System.out.println("inne");
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
+		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 
 		boolean checked = AI.catchHand(hand, card);
 		if(checked){
@@ -266,12 +232,12 @@ public class MidStrategy {
 		int[] evalScore = new int[15];
 		AI.evalScores(hand, evalScore);
 
-		if(freeScores.contains(kept - 1) && evalScore[Scorecard.threeOfAKind] != 0){
+		if(freeCategories.contains(kept - 1) && evalScore[Scorecard.threeOfAKind] != 0){
 			card.categories[kept - 1] = evalScore[kept - 1];
 			return;
 		}
 
-		if(evalScore[Scorecard.fourOfAKind] != 0 && freeScores.contains(Scorecard.fourOfAKind)){
+		if(evalScore[Scorecard.fourOfAKind] != 0 && freeCategories.contains(Scorecard.fourOfAKind)){
 			card.categories[Scorecard.fourOfAKind] = evalScore[Scorecard.fourOfAKind];
 			return;
 		}
@@ -280,22 +246,22 @@ public class MidStrategy {
 			return;
 		}
 
-		if(freeScores.contains(kept - 1)){
+		if(freeCategories.contains(kept - 1)){
 			card.categories[kept - 1] = evalScore[kept - 1];
 			return;
 		}
 
-		if(evalScore[Scorecard.threeOfAKind] != 0 && freeScores.contains(Scorecard.threeOfAKind)){
+		if(evalScore[Scorecard.threeOfAKind] != 0 && freeCategories.contains(Scorecard.threeOfAKind)){
 			card.categories[Scorecard.threeOfAKind] = evalScore[Scorecard.threeOfAKind];
 			return;
 		}
 
-		if(evalScore[Scorecard.twoPair] != 0 && freeScores.contains(Scorecard.twoPair)){
+		if(evalScore[Scorecard.twoPair] != 0 && freeCategories.contains(Scorecard.twoPair)){
 			card.categories[Scorecard.twoPair] = evalScore[Scorecard.twoPair];
 			return;
 		}
 
-		if(evalScore[Scorecard.pair] != 0 && freeScores.contains(Scorecard.pair)){
+		if(evalScore[Scorecard.pair] != 0 && freeCategories.contains(Scorecard.pair)){
 			card.categories[Scorecard.pair] = evalScore[Scorecard.pair];
 			return;
 		}
@@ -305,7 +271,7 @@ public class MidStrategy {
 
 
 	public static void allOfAKindAgressive(Scorecard card, Hand hand, int kept){
-		LinkedList<Integer> freeScores = card.getEmptyCategories();
+		LinkedList<Integer> freeCategories = card.getEmptyCategories();
 
 		boolean checked = AI.catchHand(hand, card);
 		if(checked){
@@ -315,7 +281,7 @@ public class MidStrategy {
 		int[] evalScore = new int[15];
 		AI.evalScores(hand, evalScore);
 
-		if(evalScore[Scorecard.fourOfAKind] != 0 && freeScores.contains(Scorecard.fourOfAKind)){
+		if(evalScore[Scorecard.fourOfAKind] != 0 && freeCategories.contains(Scorecard.fourOfAKind)){
 			card.categories[Scorecard.fourOfAKind] = evalScore[Scorecard.fourOfAKind];
 			return;
 		}
@@ -324,27 +290,27 @@ public class MidStrategy {
 			return;
 		}
 
-		if(freeScores.contains(kept - 1) && evalScore[Scorecard.threeOfAKind] != 0){
+		if(freeCategories.contains(kept - 1) && evalScore[Scorecard.threeOfAKind] != 0){
 			card.categories[kept - 1] = evalScore[kept - 1];
 			return;
 		}
 
-		if(evalScore[Scorecard.threeOfAKind] != 0 && freeScores.contains(Scorecard.threeOfAKind)){
+		if(evalScore[Scorecard.threeOfAKind] != 0 && freeCategories.contains(Scorecard.threeOfAKind)){
 			card.categories[Scorecard.threeOfAKind] = evalScore[Scorecard.threeOfAKind];
 			return;
 		}
 
-		if(evalScore[Scorecard.twoPair] != 0 && freeScores.contains(Scorecard.twoPair)){
+		if(evalScore[Scorecard.twoPair] != 0 && freeCategories.contains(Scorecard.twoPair)){
 			card.categories[Scorecard.twoPair] = evalScore[Scorecard.twoPair];
 			return;
 		}
 
-		if(evalScore[Scorecard.pair] != 0 && freeScores.contains(Scorecard.pair)){
+		if(evalScore[Scorecard.pair] != 0 && freeCategories.contains(Scorecard.pair)){
 			card.categories[Scorecard.pair] = evalScore[Scorecard.pair];
 			return;
 		}
 
-		if(freeScores.contains(kept - 1)){
+		if(freeCategories.contains(kept - 1)){
 			card.categories[kept - 1] = evalScore[kept - 1];
 			return;
 		}
@@ -352,8 +318,8 @@ public class MidStrategy {
 		NullEntry.nullEntry(card);
 	}
 
-	public static void stegeKolla(Scorecard card, Hand hand, LinkedList<Integer> freeScores){
-		boolean[] stegarKollade = stegCheckArray(hand);
+	public static void stegeKolla(Scorecard card, Hand hand, LinkedList<Integer> freeCategories){
+		boolean[] straights = stegCheckArray(hand);
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
@@ -362,9 +328,9 @@ public class MidStrategy {
 			return;
 		}
 
-		//vi kan fa liten stege och den ar ledig
-		if(freeScores.contains(Scorecard.smallStraight)){
-			if(stegarKollade[0] || stegarKollade[1]){
+		//Gå för en liten stege om den är ledig
+		if(freeCategories.contains(Scorecard.smallStraight)){
+			if(straights[0] || straights[1]){
 				GetCategories.smallStraight(hand);
 				boolean caught = AI.catchHand(hand, card);
 				if(caught){
@@ -376,12 +342,11 @@ public class MidStrategy {
 				if(caught){
 					return;
 				}
-				// ingen liten stege
 			}
 		}
 
-		if(freeScores.contains(Scorecard.largeStraight) && hand.getRoll() == 1){
-			if(stegarKollade[1] || stegarKollade[2]){
+		if(freeCategories.contains(Scorecard.largeStraight) && hand.getRoll() == 1){
+			if(straights[1] || straights[2]){
 				GetCategories.largeStraight(hand);
 				boolean caught = AI.catchHand(hand, card);
 				if(caught){
@@ -400,17 +365,17 @@ public class MidStrategy {
 		int[] evalScore = new int[15];
 		AI.evalScores(hand, evalScore);
 
-		if(freeScores.contains(Scorecard.twoPair) && evalScore[Scorecard.twoPair] != 0){
+		if(freeCategories.contains(Scorecard.twoPair) && evalScore[Scorecard.twoPair] != 0){
 			card.categories[Scorecard.twoPair] = evalScore[Scorecard.twoPair];
 			return;
 		}
 
-		if(freeScores.contains(Scorecard.pair) && evalScore[Scorecard.pair] != 0){
+		if(freeCategories.contains(Scorecard.pair) && evalScore[Scorecard.pair] != 0){
 			card.categories[Scorecard.pair] = evalScore[Scorecard.pair];
 			return;
 		}
 
-		if(freeScores.contains(Scorecard.threeOfAKind) && evalScore[Scorecard.threeOfAKind] != 0){
+		if(freeCategories.contains(Scorecard.threeOfAKind) && evalScore[Scorecard.threeOfAKind] != 0){
 			card.categories[Scorecard.threeOfAKind] = evalScore[Scorecard.threeOfAKind];
 			return;
 		}
@@ -420,7 +385,8 @@ public class MidStrategy {
 			NullEntry.zeroUp(card);
 		}
 	}
-
+	
+	//Kollar om vi har del av en stege, saknar endast en till tärning
 	public static boolean stegCheck(Hand hand){
 		String s = new String();
 		for(int k : hand.getHandArray()){

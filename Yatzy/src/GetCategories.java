@@ -206,7 +206,7 @@ public class GetCategories {
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 
-		for(int c = diceFreq.length - 1; c > 0; c--){
+		for(int c = diceFreq.length - 1; c >= 0; c--){
 			if(diceFreq[c] == 2){
 				if(i == 0){
 					i = c + 1;

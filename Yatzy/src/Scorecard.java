@@ -105,6 +105,7 @@ public class Scorecard {
 				total += bonus;
 			}
 		}
+		System.out.println("total" +total);
 		return total;
 	}
 

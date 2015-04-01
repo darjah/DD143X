@@ -70,17 +70,22 @@ public class MidStrategy {
 	}*/
 
 	public static void overPar(Scorecard card, Hand hand) {
-		System.out.println("här");
+		//System.out.println("här");
 		agressive(card, hand);
 	}
 
 	public static void agressive(Scorecard card, Hand hand){
-		System.out.println("nu kör vi typ");
+		//System.out.println("nu kör vi typ");
 		LinkedList<Integer> freeScores = card.getEmptyCategories();
-
+		//System.out.println("0");
 		int[] evalScores = new int[card.categories.length];
+		//System.out.println("oo");
 		AI.evalScores(hand, evalScores);
-
+		System.out.println("evalsckores:");
+		for(int i = 0; i<evalScores.length;i++){
+			System.out.println(evalScores[i]);
+		}
+		System.out.println("1");
 		//Fånga kåk direkt
 		if(AI.fullHouse(card, hand)){
 			System.out.println("a");
@@ -98,9 +103,9 @@ public class MidStrategy {
 			stegeKolla(card, hand, freeScores);
 			return;
 		}
-
+		//System.out.println("4");
 		int keep = betOnInt(card, hand);
-
+		//System.out.println("5");
 		GetCategories.allOfAKind(hand, keep);
 		if(AI.catchHand(hand, card)){
 			System.out.println("d");
@@ -113,7 +118,7 @@ public class MidStrategy {
 		}
 
 		GetCategories.allOfAKind(hand, keep);
-		System.out.println("går in i allOfAKindAgressive");
+		//System.out.println("går in i allOfAKindAgressive");
 		allOfAKindAgressive(card, hand, keep);
 	}
 
@@ -209,7 +214,7 @@ public class MidStrategy {
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
 		int value = 1;
-		System.out.println("var är vi?");
+		//System.out.println("var är vi?");
 		// omedlbart satsa pa mer en fyra av en sort
 		for(int l : diceFreq){
 			if(l >= 4){

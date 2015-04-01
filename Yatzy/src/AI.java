@@ -40,9 +40,11 @@ public class AI {
 		for(int i = 0; i < diceMaxValue; i++){
 			thisTurnScorecard[i] = diceFreq[i]*(i+1);
 		}
-
+		//System.out.println("inne");
 		thisTurnScorecard[Scorecard.pair] = pairScore(hand);
+		//System.out.println("par kollade");
 		thisTurnScorecard[Scorecard.twoPair] = twoPairScore(hand);
+		//System.out.println("två par kollade");
 		thisTurnScorecard[Scorecard.threeOfAKind] = threeOfAKindScore(hand);
 		thisTurnScorecard[Scorecard.fourOfAKind] = fourOfAKindScore(hand);
 		thisTurnScorecard[Scorecard.smallStraight] = smallStraightScore(hand);
@@ -51,6 +53,7 @@ public class AI {
 		thisTurnScorecard[Scorecard.chance] = chansScore(hand);
 		thisTurnScorecard[Scorecard.yatzy] = yatzyScore(hand);
 		//Printer.printArray(scoreScore);
+		//System.out.println("klar");
 	}
 
 	public static int pairScore(Hand hand){
@@ -72,6 +75,8 @@ public class AI {
 				highestScore = scores[j];
 			}
 		}
+		//System.out.println("kommer vi inte hit?");
+		System.out.println(highestScore);
 		return highestScore;
 	}
 
@@ -82,8 +87,8 @@ public class AI {
 
 		boolean firstPair = false;
 		int firstPairEyes = 0;
-
-		for(int i = diceMaxValue; i >= 0; i--){
+		//System.out.println("inne i tvåpar");
+		for(int i = diceMaxValue; i > 0; i--){
 			if(diceFreq[i-1] >= 2 && !firstPair){
 				firstPair = true; //Första paret hittat
 				firstPairEyes = i;	//Valör på första paret	
@@ -92,6 +97,8 @@ public class AI {
 				highestScore = firstPairEyes*2 + i*2;
 			}
 		}	
+		//System.out.println(highestScore);
+
 		return highestScore;
 	}
 

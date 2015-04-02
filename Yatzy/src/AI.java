@@ -9,8 +9,8 @@ public class AI {
 		LinkedList<Integer> emptyCategories = card.getEmptyCategories();
 		int turn = 15 - emptyCategories.size() + 1;
 
-		//emptyCategories.contains(0) || emptyCategories.contains(1) || emptyCategories.contains(2) || emptyCategories.contains(3) || emptyCategories.contains(5) || emptyCategories.contains(5)
-		if(turn <= earlyGame){
+		//turn <= earlyGame
+		if(emptyCategories.contains(0) || emptyCategories.contains(1) || emptyCategories.contains(2) || emptyCategories.contains(3) || emptyCategories.contains(5) || emptyCategories.contains(5)){
 			if(card.possibleToGetBonus()){
 				EarlyStrategy.play(card, hand);
 			}

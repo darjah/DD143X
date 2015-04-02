@@ -87,7 +87,7 @@ public class Scorecard {
 	public boolean doWeHaveBonus(){
 		int score = 0;
 
-		for(int i = 0; i < sixes; i++){
+		for(int i = 0; i <= sixes; i++){
 			if(categories[i] >= 0){
 				score += categories[i];
 			}

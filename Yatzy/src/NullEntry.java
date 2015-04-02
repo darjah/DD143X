@@ -34,21 +34,10 @@ public class NullEntry {
 		if(card.doWeHaveBonus() || !card.possibleToGetBonus()){
 			NullEntry.zeroUp(card);
 		}
-		//Om vi ligger under onPar men fortfarande möjligt att få bounsen
-		else if(card.onPar() == -1 && card.possibleToGetBonus()){
-			NullEntry.zeroDown(card);
-		}
-		else if(card.onPar() == -1 && !card.possibleToGetBonus()){
-			NullEntry.zeroUp(card);
-		}
-		//När vi ligger onPar
-		else if(card.onPar() == 0){
-			NullEntry.zeroDown(card);
-		}
-		//När vi ligger över onPar
+		/*//När vi ligger över onPar
 		else if(card.onPar() == 1){
 			NullEntry.zeroUp(card);
-		}
+		}*/
 		//Alla andra fall
 		else{
 			NullEntry.zeroDown(card);

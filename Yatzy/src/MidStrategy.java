@@ -89,36 +89,18 @@ public class MidStrategy {
 	}
 
 	public static int uppCheck(Scorecard card, Hand hand){
-		LinkedList<Integer> freeCategories = card.getEmptyCategories();
+		LinkedList<Integer> emptyCategories = card.getEmptyCategories();
 		int[] diceFreq = new int [AI.diceMaxValue];
 		diceFreq = hand.diceFrequency(hand.getHandArray(), diceFreq);
-
-		LinkedList<Integer> checkedAllready = new LinkedList<Integer>();
-
-		int betOn = 1;
-		int num = 0;
-		for(int v = 0; v < 6; v++){
-			num = 0;
-			for(int e = 5; e >= 0; e--){
-				if(diceFreq[e] > num && !checkedAllready.contains(e +1)){
-					num = diceFreq[e];
-					betOn = e +1;
-				}
-			}
-
-			if(freeCategories.contains(betOn - 1)){		
-				return betOn;
-			}
-			checkedAllready.add(betOn);
-		}
-
-		for(int e = 5; e >= 0; e--){
-			if (diceFreq[e] > num) {
-				num = diceFreq[e];
-				betOn = e;
+		int keepThisValue = 0;
+		int highestFreq = 0;
+		for(int diceValueTemp = AI.diceMaxValue; diceValueTemp > 0; diceValueTemp--){
+			if((diceFreq[diceValueTemp-1] > highestFreq) && (emptyCategories.contains(diceValueTemp-1))){
+				highestFreq = diceFreq[diceValueTemp-1];
+				keepThisValue = diceValueTemp;
 			}
 		}
-		return betOn;
+		return keepThisValue;
 	}
 
 	//Används då vi har två par i handen och vill satsa på en kåk

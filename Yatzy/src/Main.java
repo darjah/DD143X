@@ -1,12 +1,22 @@
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class Main {
 	public static void main(String[] args) {
-		//Printer printer = new Printer();
-		int nrGames = 5;
+		int nrGames = 100000;
+		ArrayList<Integer> results = new ArrayList<Integer>();
 		
 		for(int gameCounter = 1 ; gameCounter <= nrGames ; gameCounter ++){
-			Game.playGame();
+			results.add(Game.playGame());
 		}
-
-		//printer.close();	
+		
+		Printer printer = null;
+		try {
+			printer = new Printer(results);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		printer.close(results, nrGames);	
 	}	
 }

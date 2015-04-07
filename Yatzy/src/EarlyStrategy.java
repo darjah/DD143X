@@ -28,7 +28,7 @@ public class EarlyStrategy {
 				if(canWeDoAnythingWithThisHand(card, hand, evalScores, emptyCategories)){
 					return;
 				}
-				
+				//testkommentar för att se opm git funkar
 				//I värsta fall, nolla
 				NullEntry.nullEntry(card);
 				return;

@@ -236,7 +236,6 @@ public class AI {
 		return false;
 	}
 
-
 	//Beräkna poäng för one-of-a-kind. Summerar poängen för de tärningar som har det givna värdet number, BORDE FLYTTAS TILL HAND?
 	public static int numberScore(int[] dices, int number) {
 		int score = 0;

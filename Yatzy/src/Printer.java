@@ -46,7 +46,12 @@ public class Printer {
 			writeInt(results.get(i));
 		}
 		
-		System.out.println("Medelvärde: "  + sum/nrGames);
+		double sumOfAllGames = sum;
+		double nrOfGames = nrGames;
+		
+		double meanValue = sumOfAllGames/nrOfGames;
+		
+		System.out.println("Medelvärde: "  + meanValue);
 		System.out.println("Bästa: " + best);
 		System.out.println("Värsta: " + worst );
 		

@@ -26,7 +26,7 @@ public class Game {
 			}
 		}
 		
-		if(card.categories[Scorecard.yatzy] == 50){
+		if(card.categories[Scorecard.yatzy] == 50 && !card.doWeHaveBonus()){
 			yatzy = true;
 		}
 		

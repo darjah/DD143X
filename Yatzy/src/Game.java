@@ -11,13 +11,13 @@ public class Game {
 			hand = new Hand();
 			AI.play(card, hand);
 		}
-
-		for(int i = 0; i< 15; i++){
+		
+		int finalScore = card.finalScore();
+		/*for(int i = 0; i< 15; i++){
 			System.out.println(card.categories[i]);
 		}
-		int finalScore = card.finalScore();
 		System.out.println("Final score: " + finalScore);
-		System.out.println("Obtained bonus: " + card.doWeHaveBonus());
+		System.out.println("Obtained bonus: " + card.doWeHaveBonus());*/
 		
 		if(card.doWeHaveBonus()){
 			bonus = true;

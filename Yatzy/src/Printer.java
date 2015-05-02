@@ -51,9 +51,9 @@ public class Printer {
 		
 		double meanValue = sumOfAllGames/nrOfGames;
 		
-		System.out.println("Medelvärde: "  + meanValue);
-		System.out.println("Bästa: " + best);
-		System.out.println("Värsta: " + worst );
+		System.out.println("Avg.score: "  + meanValue);
+		System.out.println("Highest score: " + best);
+		System.out.println("Lowest score: " + worst );
 		
 		try {
 			writer.close();

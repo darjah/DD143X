@@ -30,7 +30,7 @@ public class Main {
 		
 		System.out.println("We aquired the bonus " + nrBonus + " times");
 		System.out.println("We aquired the bonus and a yatzy " + nrYatzyAndBonus + " times");
-		System.out.println("We aquired yatzy " + nrYatzy + " times");
+		System.out.println("We aquired only yatzy " + nrYatzy + " times");
 		
 		Printer printer = null;
 		try {
